@@ -1,0 +1,26 @@
+base.url: http://shortify.com/
+spring:
+  application:
+    name: Shortify
+  datasource:
+    url: jdbc:postgresql://localhost:5432/url
+    username: postgres
+    password: postgres
+    driverClassName: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        default_schema: public
+    database: POSTGRESQL
+    show-sql: true
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog-master.xml
+    default-schema: public
+server:
+  port: 8080
+logging:
+  level:
+    liquibase: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
