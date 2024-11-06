@@ -1,7 +1,6 @@
 package com.shortify.service.impl;
 
 import org.springframework.beans.factory.annotation.Value;
-import com.shortify.mapper.UrlMapper;
 import com.shortify.model.Url;
 import com.shortify.repository.UrlRepository;
 import com.shortify.service.UrlShorteningService;
@@ -17,8 +16,8 @@ public class UrlShorteningServiceImpl implements UrlShorteningService {
 
     @Value("${base.url}")
     private String baseUrl;
+
     private final UrlRepository urlRepository;
-    private final UrlMapper urlMapper = UrlMapper.INSTANCE;
 
     @Autowired
     public UrlShorteningServiceImpl(UrlRepository urlRepository) {
