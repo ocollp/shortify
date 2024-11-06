@@ -10,21 +10,24 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/shortify")
 public class UrlShorteningController {
 
     @Autowired
     private UrlShorteningService urlShorteningService;
 
-    @PostMapping("/shortify")
+    @PostMapping
     public ResponseEntity<UrlResponse> shortenUrl(@RequestBody UrlRequest urlRequest) {
         String shortenedUrl = urlShorteningService.shortenUrl(urlRequest.getUrl());
         return ResponseEntity.ok(new UrlResponse(shortenedUrl));
     }
 
-    @GetMapping("/shortify/{shortenedPath}")
+    @GetMapping("{shortenedPath}")
     public ResponseEntity<Void> redirectUrl(@PathVariable String shortenedPath) {
         String originalUrl = urlShorteningService.getOriginalUrl(shortenedPath);
+        if(originalUrl == null){
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.status(301).location(URI.create(originalUrl)).build();
     }
 }
