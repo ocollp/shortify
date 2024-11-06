@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.Base64;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UrlShorteningServiceImpl implements UrlShorteningService {
@@ -32,7 +32,6 @@ public class UrlShorteningServiceImpl implements UrlShorteningService {
     @Override
     public String shortenUrl(String originalUrl) {
         Optional<Url> existingUrl = Optional.ofNullable(urlRepository.findByOriginalUrl(originalUrl));
-
         if (existingUrl.isPresent()) {
             return "The URL already exists. Shortened URL: " + existingUrl.get().getShortenedUrl();
         }
@@ -55,15 +54,14 @@ public class UrlShorteningServiceImpl implements UrlShorteningService {
         return "URL successfully shortened: " + shortenedUrl;
     }
 
-    private String generateShortenedUrl(String originalUrl) {
+    private String generateShortenedUrl(String shortenedPath) {
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        String uniquePath = generateShortenedPath(originalUrl);
-        return baseUrl + "/shortify/" + uniquePath;
+        return baseUrl + "/shortify/" + shortenedPath;
     }
 
     private String generateShortenedPath(String originalUrl) {
-        String uniqueId = Base64.getUrlEncoder().encodeToString(originalUrl.getBytes()).substring(0, 8);
-        return uniqueId.replace("=", "");
+        String uniqueId = UUID.randomUUID().toString().substring(0, 8);
+        return uniqueId;
     }
 
     @Override
