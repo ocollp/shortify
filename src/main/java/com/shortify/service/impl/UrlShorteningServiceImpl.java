@@ -6,7 +6,6 @@ import com.shortify.repository.UrlRepository;
 import com.shortify.service.UrlShorteningService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -22,11 +21,6 @@ public class UrlShorteningServiceImpl implements UrlShorteningService {
     @Autowired
     public UrlShorteningServiceImpl(UrlRepository urlRepository) {
         this.urlRepository = urlRepository;
-    }
-
-    @Override
-    public String generateFullShortenedUrl(String shortenedPath) {
-        return baseUrl + shortenedPath;
     }
 
     @Override
@@ -55,7 +49,6 @@ public class UrlShorteningServiceImpl implements UrlShorteningService {
     }
 
     private String generateShortenedUrl(String shortenedPath) {
-        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         return baseUrl + shortenedPath;
     }
 

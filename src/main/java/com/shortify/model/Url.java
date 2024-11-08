@@ -2,6 +2,7 @@ package com.shortify.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Url {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,4 +23,9 @@ public class Url {
     private String shortenedUrl;
     @Column(nullable = false, updatable = false)
     private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
+
+    public Url(String originalUrl, String shortenedUrl) {
+        this.originalUrl = originalUrl;
+        this.shortenedUrl = shortenedUrl;
+    }
 }
