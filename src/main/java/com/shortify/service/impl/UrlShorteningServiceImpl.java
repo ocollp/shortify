@@ -56,7 +56,7 @@ public class UrlShorteningServiceImpl implements UrlShorteningService {
 
     private String generateShortenedUrl(String shortenedPath) {
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        return baseUrl + "/shortify/" + shortenedPath;
+        return baseUrl + shortenedPath;
     }
 
     private String generateShortenedPath(String originalUrl) {
