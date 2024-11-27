@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.shortify.model.Url;
+import com.shortify.model.UrlResponse;
 import com.shortify.repository.UrlRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,37 +25,59 @@ public class UrlShorteningServiceImplTest {
 
     @BeforeEach
     public void setUp() {
-        ReflectionTestUtils.setField(urlShorteningService, "baseUrl", "http://shortify.com/"); // Inject mock base URL
+        ReflectionTestUtils.setField(urlShorteningService, "baseUrl", "http://shortify.com");
     }
 
     @Test
     public void testShortenNewUrl() {
-        String originalUrl = "http://shortify.com/";
+        String originalUrl = "http://example.com/blablablablablabla";
+
         when(urlRepository.findByOriginalUrl(originalUrl)).thenReturn(null);
-        when(urlRepository.findByShortenedUrl(anyString())).thenReturn(null);
 
-        String result = urlShorteningService.shortenUrl(originalUrl);
+        Url capturedUrl = new Url();
+        doAnswer(invocation -> {
+            Url url = invocation.getArgument(0);
+            capturedUrl.setOriginalUrl(url.getOriginalUrl());
+            capturedUrl.setShortenedPath(url.getShortenedPath());
+            capturedUrl.setShortenedUrl(url.getShortenedUrl());
+            return null;
+        }).when(urlRepository).save(any(Url.class));
 
-        assertTrue(result.contains("URL successfully shortened:"));
+        UrlResponse urlResponse = urlShorteningService.shortenUrl(originalUrl);
+
+        assertNotNull(urlResponse.getShortenedPath());
+        assertNotNull(urlResponse.getShortenedUrl());
+
         verify(urlRepository).save(any(Url.class));
+        assertEquals(originalUrl, capturedUrl.getOriginalUrl());
     }
 
     @Test
-    public void testShortenUrlWithConflict() {
-        String originalUrl = "http://shortify.com/";
-        when(urlRepository.findByOriginalUrl(originalUrl)).thenReturn(null);
-        when(urlRepository.findByShortenedUrl(anyString())).thenReturn(new Url());
+    public void testShortenExistingUrl() {
+        String originalUrl = "http://example.com/blablablablablabla";
+        String shortenedPath = "174c74d6";
+        String shortenedUrl = "http://shortify.com/" + shortenedPath;
 
-        String result = urlShorteningService.shortenUrl(originalUrl);
+        Url existingUrl = new Url(originalUrl, shortenedPath, shortenedUrl);
 
-        assertEquals("A conflict occurred: the shortened path already exists. Please try again.", result);
+        when(urlRepository.findByOriginalUrl(originalUrl)).thenReturn(existingUrl);
+
+        UrlResponse urlResponse = urlShorteningService.shortenUrl(originalUrl);
+
+        assertEquals(shortenedPath, urlResponse.getShortenedPath());
+        assertEquals(shortenedUrl, urlResponse.getShortenedUrl());
+        verify(urlRepository, never()).save(any(Url.class));
     }
 
     @Test
     public void testGetOriginalUrlValidShortenedPath() {
-        String shortenedPath = "abcd1234";
-        String originalUrl = "http://shortify.com/";
-        when(urlRepository.findByShortenedUrl(shortenedPath)).thenReturn(new Url(originalUrl, shortenedPath));
+        String shortenedPath = "174c74d6";
+        String shortenedUrl = "http://shortify.com/174c74d6";
+        String originalUrl = "http://example.com/blablablablablabla";
+
+        Url url = new Url(originalUrl, shortenedPath, shortenedUrl);
+
+        when(urlRepository.findByShortenedUrl(shortenedPath)).thenReturn(url);
 
         String result = urlShorteningService.getOriginalUrl(shortenedPath);
 
@@ -64,6 +87,7 @@ public class UrlShorteningServiceImplTest {
     @Test
     public void testGetOriginalUrlInvalidShortenedPath() {
         String shortenedPath = "nonexistent";
+
         when(urlRepository.findByShortenedUrl(shortenedPath)).thenReturn(null);
 
         String result = urlShorteningService.getOriginalUrl(shortenedPath);
@@ -73,11 +97,15 @@ public class UrlShorteningServiceImplTest {
 
     @Test
     public void testGetOriginalUrlWithEmptyPath() {
-        assertThrows(IllegalArgumentException.class, () -> urlShorteningService.getOriginalUrl(""));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> urlShorteningService.getOriginalUrl(""));
+        assertEquals("The parameter shortenedPath cannot be null or empty.", exception.getMessage());
     }
 
     @Test
     public void testGetOriginalUrlWithNullPath() {
-        assertThrows(IllegalArgumentException.class, () -> urlShorteningService.getOriginalUrl(null));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> urlShorteningService.getOriginalUrl(null));
+        assertEquals("The parameter shortenedPath cannot be null or empty.", exception.getMessage());
     }
 }

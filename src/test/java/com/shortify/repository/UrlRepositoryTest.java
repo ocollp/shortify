@@ -24,23 +24,23 @@ public class UrlRepositoryTest {
     @BeforeEach
     public void setUp() {
         testUrl = new Url();
-        testUrl.setOriginalUrl("https://shortify.com");
-        testUrl.setShortenedUrl("short123");
+        testUrl.setOriginalUrl("http://example.com/blablabla");
+        testUrl.setShortenedPath("174c74d6");
+        testUrl.setShortenedUrl("http://shortify.com/174c74d6");
         testUrl.setId(UUID.randomUUID());
-
         urlRepository.save(testUrl);
     }
 
     @Test
     public void testFindByShortenedUrl() {
-        Url foundUrl = urlRepository.findByShortenedUrl("short123");
+        Url foundUrl = urlRepository.findByShortenedUrl("http://shortify.com/174c74d6");
         assertNotNull(foundUrl);
         assertEquals(testUrl.getOriginalUrl(), foundUrl.getOriginalUrl());
     }
 
     @Test
     public void testFindByOriginalUrl() {
-        Url foundUrl = urlRepository.findByOriginalUrl("https://shortify.com");
+        Url foundUrl = urlRepository.findByOriginalUrl("http://example.com/blablabla");
         assertNotNull(foundUrl);
         assertEquals(testUrl.getShortenedUrl(), foundUrl.getShortenedUrl());
     }

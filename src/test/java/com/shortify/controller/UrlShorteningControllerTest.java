@@ -1,6 +1,7 @@
 package com.shortify.controller;
 
 import com.shortify.model.UrlRequest;
+import com.shortify.model.UrlResponse;
 import com.shortify.service.UrlShorteningService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,12 +36,12 @@ public class UrlShorteningControllerTest {
 
     @Test
     public void testShortenUrl() throws Exception {
-        String originalUrl = "http://shortify.com";
-        String shortenedUrl = "http://shortify/abc123";
+        String originalUrl = "http://example.com/blablabla";
+        String shortenedPath = "174c74d6";
+        String shortenedUrl = "http://shortify.com/174c74d6";
 
-        when(urlShorteningService.shortenUrl(originalUrl)).thenReturn(shortenedUrl);
-
-        UrlRequest urlRequest = new UrlRequest(originalUrl);  // Create a URL request object
+        UrlResponse urlResponse = new UrlResponse(shortenedPath, shortenedUrl);
+        when(urlShorteningService.shortenUrl(originalUrl)).thenReturn(urlResponse);
 
         mockMvc.perform(post("/api/shortify")
                         .contentType(MediaType.APPLICATION_JSON)
