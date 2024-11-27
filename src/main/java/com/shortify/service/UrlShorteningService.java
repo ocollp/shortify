@@ -1,6 +1,8 @@
 package com.shortify.service;
 
+import com.shortify.model.UrlResponse;
+
 public interface UrlShorteningService {
-    String shortenUrl(String originalUrl);
+    UrlResponse shortenUrl(String originalUrl);
     String getOriginalUrl(String shortenedPath);
 }

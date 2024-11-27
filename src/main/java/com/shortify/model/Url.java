@@ -2,19 +2,15 @@ package com.shortify.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Timestamp;
 import java.util.UUID;
 
 @Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@NoArgsConstructor
 public class Url {
 
     @Id
@@ -26,15 +22,19 @@ public class Url {
     @Schema(description = "The original URL that was shortened", example = "https://www.example.com/loremipsumdolorsitamet")
     private String originalUrl;
 
-    @Schema(description = "The shortened URL", example = "https://short.ly/abc123")
+    @Schema(description = "The shortened path", example = "abc123")
+    private String shortenedPath;
+
+    @Schema(description = "The shortened URL", example = "https://shortify.com/abc123")
     private String shortenedUrl;
 
     @Column(nullable = false, updatable = false)
     @Schema(description = "Timestamp of when the URL was created", example = "2024-11-27T10:15:30")
     private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 
-    public Url(String originalUrl, String shortenedUrl) {
+    public Url(String originalUrl, String shortenedPath, String shortenedUrl) {
         this.originalUrl = originalUrl;
+        this.shortenedPath = shortenedPath;
         this.shortenedUrl = shortenedUrl;
     }
 }

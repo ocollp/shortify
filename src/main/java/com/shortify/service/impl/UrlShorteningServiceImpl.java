@@ -1,10 +1,14 @@
 package com.shortify.service.impl;
 
+import com.shortify.model.UrlResponse;
+import lombok.Builder;
 import org.springframework.beans.factory.annotation.Value;
 import com.shortify.model.Url;
 import com.shortify.repository.UrlRepository;
 import com.shortify.service.UrlShorteningService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -24,28 +28,22 @@ public class UrlShorteningServiceImpl implements UrlShorteningService {
     }
 
     @Override
-    public String shortenUrl(String originalUrl) {
+    public UrlResponse shortenUrl(String originalUrl) {
         Optional<Url> existingUrl = Optional.ofNullable(urlRepository.findByOriginalUrl(originalUrl));
         if (existingUrl.isPresent()) {
-            return "The URL already exists. Shortened URL: " + existingUrl.get().getShortenedUrl();
+            return new UrlResponse(existingUrl.get().getShortenedPath(), existingUrl.get().getShortenedUrl());
         }
 
         String shortenedPath = generateShortenedPath(originalUrl);
-
-        Optional<Url> pathExists = Optional.ofNullable(urlRepository.findByShortenedUrl(shortenedPath));
-        if (pathExists.isPresent()) {
-            return "A conflict occurred: the shortened path already exists. Please try again.";
-        }
-
         String shortenedUrl = generateShortenedUrl(shortenedPath);
 
         Url url = new Url();
         url.setOriginalUrl(originalUrl);
-        url.setShortenedUrl(shortenedPath);
-
+        url.setShortenedPath(shortenedPath);
+        url.setShortenedUrl(baseUrl + shortenedUrl);
         urlRepository.save(url);
 
-        return "URL successfully shortened: " + shortenedUrl;
+        return new UrlResponse(url.getShortenedPath(), url.getShortenedUrl());
     }
 
     private String generateShortenedUrl(String shortenedPath) {
@@ -53,8 +51,7 @@ public class UrlShorteningServiceImpl implements UrlShorteningService {
     }
 
     private String generateShortenedPath(String originalUrl) {
-        String uniqueId = UUID.randomUUID().toString().substring(0, 8);
-        return uniqueId;
+        return UUID.randomUUID().toString().substring(0, 8);
     }
 
     @Override

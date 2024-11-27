@@ -20,8 +20,8 @@ public class UrlShorteningController {
     @PostMapping
     @Operation(summary = "Shorten a URL", description = "Shortens a given URL and returns the shortened version.")
     public ResponseEntity<UrlResponse> shortenUrl(@RequestBody UrlRequest urlRequest) {
-        String shortenedUrl = urlShorteningService.shortenUrl(urlRequest.getUrl());
-        return ResponseEntity.ok(new UrlResponse(shortenedUrl));
+        UrlResponse urlResponse = urlShorteningService.shortenUrl(urlRequest.getUrl());
+        return ResponseEntity.ok(urlResponse);
     }
 
     @GetMapping("/{shortenedPath}")
