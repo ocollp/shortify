@@ -8,6 +8,7 @@ import lombok.Data;
 @AllArgsConstructor
 @Schema(description = "Response for a shortened URL")
 public class UrlResponse {
+
     @Schema(
             description = "The shortened path generated from the original URL",
             example = "abc123")

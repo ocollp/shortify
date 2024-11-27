@@ -40,7 +40,7 @@ public class UrlShorteningServiceImpl implements UrlShorteningService {
         Url url = new Url();
         url.setOriginalUrl(originalUrl);
         url.setShortenedPath(shortenedPath);
-        url.setShortenedUrl(baseUrl + shortenedUrl);
+        url.setShortenedUrl(shortenedUrl);
         urlRepository.save(url);
 
         return new UrlResponse(url.getShortenedPath(), url.getShortenedUrl());
@@ -60,7 +60,7 @@ public class UrlShorteningServiceImpl implements UrlShorteningService {
             throw new IllegalArgumentException("The parameter shortenedPath cannot be null or empty.");
         }
 
-        Url url = urlRepository.findByShortenedUrl(shortenedPath);
+        Url url = urlRepository.findByShortenedPath(shortenedPath);
         return url != null ? url.getOriginalUrl() : null;
     }
 }

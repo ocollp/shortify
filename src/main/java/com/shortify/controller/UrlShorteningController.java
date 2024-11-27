@@ -26,11 +26,11 @@ public class UrlShorteningController {
 
     @GetMapping("/{shortenedPath}")
     @Operation(summary = "Redirect to Original URL", description = "Redirects the shortened URL to the original one.")
-    public ResponseEntity<Void> redirectUrl(@PathVariable String shortenedPath) {
+    public ResponseEntity<String> redirectUrl(@PathVariable String shortenedPath) {
         String originalUrl = urlShorteningService.getOriginalUrl(shortenedPath);
         if (originalUrl == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.status(301).location(URI.create(originalUrl)).build();
+        return ResponseEntity.ok(originalUrl);
     }
 }
