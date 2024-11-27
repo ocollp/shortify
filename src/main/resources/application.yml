@@ -14,7 +14,7 @@ spring:
     database: POSTGRESQL
     show-sql: true
   liquibase:
-    enabled: true
+    enabled: false
     change-log: classpath:/db/changelog-master.xml
     default-schema: public
 server:
