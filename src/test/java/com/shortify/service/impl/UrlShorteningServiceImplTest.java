@@ -20,10 +20,6 @@ public class UrlShorteningServiceImplTest {
     @Value("${base.url}")
     private String baseUrl;
 
-    private final String shortenedPath = "174c7";
-    private final String shortenedUrl = "shortify.ly/174c7";
-    private final String originalUrl = "www.example.com/looooooong-url";
-
     @Mock
     private UrlRepository urlRepository;
 
@@ -32,6 +28,9 @@ public class UrlShorteningServiceImplTest {
 
     @Test
     public void testGetOriginalUrlValidShortenedPath() {
+        String shortenedPath = "174c7";
+        String originalUrl = "www.example.com/looooooong-url";
+        String shortenedUrl = "shortify.ly/174c7";
         Url url = new Url(originalUrl, shortenedPath, shortenedUrl);
 
         when(urlRepository.findByShortenedPath(shortenedPath)).thenReturn(url);
