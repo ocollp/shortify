@@ -55,10 +55,10 @@ Shortify is a URL shortening service developed in Java 17 using Spring Boot and 
    Content-Type: application/json
    
    {
-      "originalUrl": "https://www.example.com/long-url"
+      "originalUrl": "www.example.com/looooooong-url"
    }
    ```  
 2. **Retrieve Original URL**:
    ```bash
-    GET /shortify/{shortenedPath}
+    GET /shortify/12e6e
    ``` 

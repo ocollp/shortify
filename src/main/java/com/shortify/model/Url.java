@@ -4,13 +4,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Timestamp;
 import java.util.UUID;
-
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Url {
 
     @Id
@@ -19,18 +18,14 @@ public class Url {
     private UUID id;
 
     @Column(nullable = false)
-    @Schema(description = "The original URL that was shortened", example = "https://www.example.com/loremipsumdolorsitamet")
+    @Schema(description = "The original URL that was shortened", example = "www.example.com/looooooong-url")
     private String originalUrl;
 
-    @Schema(description = "The shortened path", example = "abc123")
+    @Schema(description = "The shortened path", example = "12e6e")
     private String shortenedPath;
 
-    @Schema(description = "The shortened URL", example = "https://shortify.com/abc123")
+    @Schema(description = "The shortened URL", example = "shortify.ly/12e6e")
     private String shortenedUrl;
-
-    @Column(nullable = false, updatable = false)
-    @Schema(description = "Timestamp of when the URL was created", example = "2024-11-27T10:15:30")
-    private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 
     public Url(String originalUrl, String shortenedPath, String shortenedUrl) {
         this.originalUrl = originalUrl;

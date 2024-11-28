@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-
 @RestController
 @RequestMapping("/api/shortify")
 public class UrlShorteningController {
@@ -26,11 +24,8 @@ public class UrlShorteningController {
 
     @GetMapping("/{shortenedPath}")
     @Operation(summary = "Redirect to Original URL", description = "Redirects the shortened URL to the original one.")
-    public ResponseEntity<String> redirectUrl(@PathVariable String shortenedPath) {
-        String originalUrl = urlShorteningService.getOriginalUrl(shortenedPath);
-        if (originalUrl == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(originalUrl);
+    public ResponseEntity<UrlResponse> redirectUrl(@PathVariable String shortenedPath) {
+        UrlResponse urlResponse = urlShorteningService.getOriginalUrl(shortenedPath);
+        return ResponseEntity.ok(urlResponse);
     }
 }

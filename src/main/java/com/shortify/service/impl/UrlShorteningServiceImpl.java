@@ -1,14 +1,12 @@
 package com.shortify.service.impl;
 
+import com.shortify.exception.UrlNotFoundException;
 import com.shortify.model.UrlResponse;
-import lombok.Builder;
 import org.springframework.beans.factory.annotation.Value;
 import com.shortify.model.Url;
 import com.shortify.repository.UrlRepository;
 import com.shortify.service.UrlShorteningService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -20,6 +18,7 @@ public class UrlShorteningServiceImpl implements UrlShorteningService {
     @Value("${base.url}")
     private String baseUrl;
 
+    @Autowired
     private final UrlRepository urlRepository;
 
     @Autowired
@@ -31,19 +30,26 @@ public class UrlShorteningServiceImpl implements UrlShorteningService {
     public UrlResponse shortenUrl(String originalUrl) {
         Optional<Url> existingUrl = Optional.ofNullable(urlRepository.findByOriginalUrl(originalUrl));
         if (existingUrl.isPresent()) {
-            return new UrlResponse(existingUrl.get().getShortenedPath(), existingUrl.get().getShortenedUrl());
+            return UrlResponse.builder()
+                    .shortenedPath(existingUrl.get().getShortenedPath())
+                    .shortenedUrl(existingUrl.get().getShortenedUrl())
+                    .build();
         }
 
         String shortenedPath = generateShortenedPath(originalUrl);
         String shortenedUrl = generateShortenedUrl(shortenedPath);
 
-        Url url = new Url();
-        url.setOriginalUrl(originalUrl);
-        url.setShortenedPath(shortenedPath);
-        url.setShortenedUrl(shortenedUrl);
+        Url url = Url.builder()
+                .originalUrl(originalUrl)
+                .shortenedPath(shortenedPath)
+                .shortenedUrl(shortenedUrl)
+                .build();
+
         urlRepository.save(url);
 
-        return new UrlResponse(url.getShortenedPath(), url.getShortenedUrl());
+        return UrlResponse.builder()
+                .shortenedUrl(url.getShortenedUrl())
+                .build();
     }
 
     private String generateShortenedUrl(String shortenedPath) {
@@ -51,16 +57,15 @@ public class UrlShorteningServiceImpl implements UrlShorteningService {
     }
 
     private String generateShortenedPath(String originalUrl) {
-        return UUID.randomUUID().toString().substring(0, 8);
+        return UUID.randomUUID().toString().substring(0, 5);
     }
 
     @Override
-    public String getOriginalUrl(String shortenedPath) {
-        if (shortenedPath == null || shortenedPath.isEmpty()) {
-            throw new IllegalArgumentException("The parameter shortenedPath cannot be null or empty.");
-        }
-
+    public UrlResponse getOriginalUrl(String shortenedPath) {
         Url url = urlRepository.findByShortenedPath(shortenedPath);
-        return url != null ? url.getOriginalUrl() : null;
+        if (url == null) {
+            throw new UrlNotFoundException(shortenedPath);
+        }
+        return new UrlResponse(url.getOriginalUrl(), null, null);
     }
 }

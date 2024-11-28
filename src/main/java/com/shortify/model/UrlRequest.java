@@ -10,8 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Schema(description = "URL shortening request")
 public class UrlRequest {
+
     @Schema(
             description = "The original URL that needs to be shortened",
-            example = "https://www.example.com/loremipsumdolorsitamet")
+            example = "www.example.com/looooooong-url")
     private String url;
 }
