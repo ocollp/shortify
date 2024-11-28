@@ -36,11 +36,11 @@ public class UrlShorteningControllerTest {
 
     @Test
     public void testShortenUrl() throws Exception {
-        String originalUrl = "http://example.com/blablabla";
-        String shortenedPath = "174c74d6";
-        String shortenedUrl = "http://shortify.com/174c74d6";
+        String originalUrl = "www.example.com/looooooong-url";
+        String shortenedPath = "174c7";
+        String shortenedUrl = "shortify.ly/174c7";
 
-        UrlResponse urlResponse = new UrlResponse(shortenedPath, shortenedUrl);
+        UrlResponse urlResponse = new UrlResponse(null, shortenedPath, shortenedUrl);
         when(urlShorteningService.shortenUrl(originalUrl)).thenReturn(urlResponse);
 
         mockMvc.perform(post("/api/shortify")

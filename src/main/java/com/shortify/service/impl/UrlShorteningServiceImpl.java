@@ -62,10 +62,15 @@ public class UrlShorteningServiceImpl implements UrlShorteningService {
 
     @Override
     public UrlResponse getOriginalUrl(String shortenedPath) {
+        if (shortenedPath == null || shortenedPath.isEmpty()) {
+            throw new IllegalArgumentException("The parameter shortenedPath cannot be null or empty.");
+        }
+
         Url url = urlRepository.findByShortenedPath(shortenedPath);
         if (url == null) {
             throw new UrlNotFoundException(shortenedPath);
         }
+
         return new UrlResponse(url.getOriginalUrl(), null, null);
     }
 }
